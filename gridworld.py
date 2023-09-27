@@ -99,13 +99,13 @@ class GridPoint:
              self._occupants.remove(occupant)
              return None
           # can't leave that way
-          if self._neighbours[direction] is None:
+          if self._neighbours[int(direction)] is None:
              return self
           # desired direction is already full
-          if self._neighbours[direction].occupied:
+          if self._neighbours[int(direction)].occupied:
              return self
           self._occupants.remove(occupant)
-          occupied = self._neighbours[direction].occupy(occupant, (self.x, self.y))
+          occupied = self._neighbours[int(direction)].occupy(occupant, (self.x, self.y))
           if occupied is None:
              return self
           return occupied

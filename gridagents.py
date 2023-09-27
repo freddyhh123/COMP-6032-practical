@@ -1,6 +1,7 @@
 import math
 import numpy
 import uuid
+import gridworld
 
 # base class for all objects that can be in a GridWorld. Not much here other than
 # the world of which they are a part and their x-y coordinates in the world (which may
@@ -116,7 +117,6 @@ class GridAgent(GridObject):
           
           # default action is just a random move in some direction.
           actiondata = GridAgent._depthFirstExploration(self, world,x,y)
-          GridObject.__setattr__(self,"_currentAction",Action(self, Action.move, None, 3))
           return self._currentAction
 
     
@@ -125,17 +125,33 @@ class GridAgent(GridObject):
       # a depth-first exploration should proceed as far as it can, by choosing a direction at each point
       # where a decision is possible, then 'backtracking' once no further choices are available, back
       # to the last point where a choice was possible.
-      def _depthFirstExploration(self, world, x, y):
+      def _depthFirstExploration(self, world, x,y):
            # FIXME build the map, indexed by (origin)(destination) pairs
-           self._map[(x,y)] = {}
            self._map[(x,y)] = {
-               "North1" : world.canGo(self,1),
-               "South2" : world.canGo(self,2),
-               "East3" : ,
-               "West4" : 
+                  "access" : {}
+            }
+           currentGrid = world._grid[y][x]
+           self._map[(x,y)]["access"] = {
+               "0" : currentGrid.canGo(0),
+               "1" : currentGrid.canGo(1),
+               "2" : currentGrid.canGo(2),
+               "3" : currentGrid.canGo(3)
            }
-           # FIXME obviously this does nothing
-           GridObject.__setattr__(self,"_currentAction",Action(self, Action.inaction, None, -1))
+           self._backtrack.append((x,y))
+           self._removeFrontier(x,y)
+           move = False
+           for direction in self._map[(x,y)]["access"]:
+               if self._map[(x,y)]["access"][direction] == True:
+                  newlocation = currentGrid._neighbours[int(direction)].x, currentGrid._neighbours[int(direction)].y
+                  if self._inFrontier(newlocation) == None and self._map.get(newlocation) == None:
+                     self._frontier.append(newlocation)
+                  if self._inFrontier(newlocation) != None:
+                     GridObject.__setattr__(self,"_currentAction",Action(self, Action.move, None, direction))
+                     move = True
+           if move == False:
+               self._backtrackFunc()
+                  
+                   
            return self._currentAction
 
       # TODO
@@ -173,3 +189,12 @@ class GridAgent(GridObject):
           except StopIteration:
              return None
           return nextTgt
+      
+      def _removeFrontier(self,x,y):
+          for location in self._frontier:
+              if location == (x,y):
+                  self._frontier.remove(location)
+
+      def _backtrackFunc(self):
+          thing = 1
+          
