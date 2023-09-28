@@ -149,7 +149,7 @@ class GridAgent(GridObject):
                      GridObject.__setattr__(self,"_currentAction",Action(self, Action.move, None, direction))
                      move = True
            if move == False:
-               self._backtrackFunc()
+               self._backtrackFunc(world)
                   
                    
            return self._currentAction
@@ -195,6 +195,21 @@ class GridAgent(GridObject):
               if location == (x,y):
                   self._frontier.remove(location)
 
-      def _backtrackFunc(self):
-          thing = 1
+      def _backtrackFunc(self,world):
+         for currentBacktrack in reversed(self._backtrack):
+             backtrackGrid = world._grid[currentBacktrack[0]][currentBacktrack[1]]
+             backtrackDirection = self._getDirection(currentBacktrack)
+             if backtrackDirection == -1:
+                 continue
+             GridObject.__setattr__(self,"_currentAction",Action(self, Action.move, None, backtrackDirection))
+             
+             break
+                   
+
+
+
+                     
+                 
+             
+             
           
