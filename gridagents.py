@@ -132,6 +132,11 @@ class GridAgent(GridObject):
         # default action is just a random move in some direction.
 
         actiondata = GridAgent._depthFirstExploration(self, world, x, y)
+        if len(self._frontier) == 0:
+            pprint("All locations found! Frontier length 0")
+            pprint("Found " + str(len(self._corridors)))
+            pprint("At Coordinates:")
+            pprint(self._corridors)
         pprint("Frontier locations: " + str(len(self._frontier)))
         return self._currentAction
 
@@ -143,6 +148,7 @@ class GridAgent(GridObject):
     def _depthFirstExploration(self, world, x, y):
         # FIXME build the map, indexed by (origin)(destination) pairs
         # Here im just setting up the map info, it contains the location and whether its directions can be accessed
+        self._initrun = 1
         self._map[(x, y)] = {
             "access": {}
         }
